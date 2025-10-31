@@ -7,7 +7,7 @@ Java 25.0.1의 가상 쓰레드 성능 테스트 프로젝트입니다.
 ```
 JavaTest/
 ├── step1/          # 플랫폼 쓰레드 vs 가상 쓰레드
-├── step2/          # Map.of vs ConcurrentHashMap
+├── step2/          # Map.of vs ConcurrentHashMap (?????????)
 ├── step3/          # 반복문 vs 가상 쓰레드
 ├── runner.bat      # 전체 실행 (윈도우)
 └── runner.sh       # 전체 실행 (리눅스/맥)

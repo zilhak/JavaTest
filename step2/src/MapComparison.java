@@ -8,7 +8,7 @@ public class MapComparison {
 
         // Test cases with different workload sizes
         int[] workloadSizes = {1_000, 10_000, 100_000, 1_000_000};
-        int threadCount = 10_000;
+        int threadCount = 100_000;
 
         for (int workload : workloadSizes) {
             System.out.println("--- Workload: " + workload + " iterations per thread ---");
@@ -39,10 +39,14 @@ public class MapComparison {
         );
 
         Thread[] threads = new Thread[threadCount];
+        double[] results = new double[threadCount];
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(sharedMap, workload));
+            final int index = i;
+            threads[i] = Thread.ofVirtual().unstarted(() -> {
+                results[index] = doWork(sharedMap, workload);
+            });
         }
 
         // Start timing
@@ -62,7 +66,13 @@ public class MapComparison {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1_000_000; // Convert to milliseconds
 
-        System.out.println("Map.of (immutable): " + duration + " ms");
+        // Calculate sum
+        double sum = 0;
+        for (double result : results) {
+            sum += result;
+        }
+
+        System.out.println("Map.of (immutable): " + duration + " ms, sum: " + sum);
     }
 
     private static void testConcurrentHashMap(int threadCount, int workload) throws InterruptedException {
@@ -80,10 +90,14 @@ public class MapComparison {
         sharedMap.put(10, "value10");
 
         Thread[] threads = new Thread[threadCount];
+        double[] results = new double[threadCount];
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(sharedMap, workload));
+            final int index = i;
+            threads[i] = Thread.ofVirtual().unstarted(() -> {
+                results[index] = doWork(sharedMap, workload);
+            });
         }
 
         // Start timing
@@ -103,21 +117,28 @@ public class MapComparison {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1_000_000; // Convert to milliseconds
 
-        System.out.println("HashMap (mutable):  " + duration + " ms");
+        // Calculate sum
+        double sum = 0;
+        for (double result : results) {
+            sum += result;
+        }
+
+        System.out.println("HashMap (mutable):  " + duration + " ms, sum: " + sum);
     }
 
-    private static void doWork(Map<Integer, String> map, int iterations) {
-        // Create local array to store results (prevent JIT elimination)
-        String[] results = new String[iterations];
+    private static double doWork(Map<Integer, String> map, int iterations) {
+        double result = 0;
 
         for (int i = 0; i < iterations; i++) {
-            // Read from shared map and store in array
-            results[i] = map.get((i % 10) + 1);
+            // Read from shared map
+            String value = map.get((i % 10) + 1);
+
+            // Perform complex operations that JIT cannot eliminate
+            int hashCode = value.hashCode();
+            int length = value.length();
+            result += Math.sqrt(hashCode * length + i);
         }
 
-        // Touch the array to prevent JIT from removing it
-        if (results[0] == null) {
-            System.out.println("Unexpected null");
-        }
+        return result;
     }
 }

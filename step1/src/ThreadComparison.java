@@ -4,7 +4,7 @@ public class ThreadComparison {
         System.out.println("=== Platform Thread vs Virtual Thread Performance Comparison ===\n");
 
         // Test cases with different workload sizes
-        int[] workloadSizes = {1_000, 10_000, 100_000, 1_000_000};
+        int[] workloadSizes = {1_000, 10_000, 100_000, 1_000_000, 1_000_0000};
         int threadCount = 10_000;
 
         for (int workload : workloadSizes) {
@@ -22,10 +22,14 @@ public class ThreadComparison {
 
     private static void testPlatformThreads(int threadCount, int workload) throws InterruptedException {
         Thread[] threads = new Thread[threadCount];
+        double[] results = new double[threadCount];
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(() -> doWork(workload));
+            final int index = i;
+            threads[i] = new Thread(() -> {
+                results[index] = doWork(workload);
+            });
         }
 
         // Start timing
@@ -45,15 +49,25 @@ public class ThreadComparison {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1_000_000; // Convert to milliseconds
 
-        System.out.println("Platform Threads (" + threadCount + " threads): " + duration + " ms");
+        // Calculate sum
+        double sum = 0;
+        for (double result : results) {
+            sum += result;
+        }
+
+        System.out.println("Platform Threads (" + threadCount + " threads): " + duration + " ms, sum: " + sum);
     }
 
     private static void testVirtualThreads(int threadCount, int workload) throws InterruptedException {
         Thread[] threads = new Thread[threadCount];
+        double[] results = new double[threadCount];
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(workload));
+            final int index = i;
+            threads[i] = Thread.ofVirtual().unstarted(() -> {
+                results[index] = doWork(workload);
+            });
         }
 
         // Start timing
@@ -73,13 +87,20 @@ public class ThreadComparison {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1_000_000; // Convert to milliseconds
 
-        System.out.println("Virtual Threads  (" + threadCount + " threads): " + duration + " ms");
+        // Calculate sum
+        double sum = 0;
+        for (double result : results) {
+            sum += result;
+        }
+
+        System.out.println("Virtual Threads  (" + threadCount + " threads): " + duration + " ms, sum: " + sum);
     }
 
-    private static void doWork(int iterations) {
-        int a = 0;
+    private static double doWork(int iterations) {
+        double result = 0;
         for (int i = 0; i < iterations; i++) {
-            a++;
+            result += Math.sqrt(i);
         }
+        return result;
     }
 }

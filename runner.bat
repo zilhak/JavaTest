@@ -11,7 +11,7 @@ call run.bat
 cd ..
 echo.
 
-echo [2단계] Map.of vs ConcurrentHashMap (???????)
+echo [2단계] Map.of vs ConcurrentHashMap (가상 쓰레드)
 echo -----------------------------------
 cd step2
 call run.bat

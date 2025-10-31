@@ -25,10 +25,10 @@ public class ArrayOperation {
             System.out.println("=== Processing " + threadCount + " elements ===");
 
             // Method 1: Simple for-loop
-            int[] outputForLoop = testForLoop(input, threadCount);
+            double[] outputForLoop = testForLoop(input, threadCount);
 
             // Method 2: Virtual Threads
-            int[] outputVirtualThread = testVirtualThreads(input, threadCount);
+            double[] outputVirtualThread = testVirtualThreads(input, threadCount);
 
             // Verify results are the same
             boolean identical = Arrays.equals(outputForLoop, outputVirtualThread);
@@ -37,15 +37,15 @@ public class ArrayOperation {
         }
     }
 
-    private static int[] testForLoop(int[] input, int count) {
-        int[] output = new int[input.length];
+    private static double[] testForLoop(int[] input, int count) {
+        double[] output = new double[input.length];
 
         // Start timing
         long startTime = System.nanoTime();
 
-        // Simple for-loop
+        // Complex computation for each element
         for (int i = 0; i < count; i++) {
-            output[i] = input[i] / 2;
+            output[i] = Math.sqrt(input[i] * input[i] + i) + Math.sin(input[i]);
         }
 
         // End timing
@@ -57,8 +57,8 @@ public class ArrayOperation {
         return output;
     }
 
-    private static int[] testVirtualThreads(int[] input, int threadCount) throws InterruptedException {
-        int[] output = new int[input.length];
+    private static double[] testVirtualThreads(int[] input, int threadCount) throws InterruptedException {
+        double[] output = new double[input.length];
 
         // Start timing from thread initialization
         long startTime = System.nanoTime();
@@ -69,8 +69,8 @@ public class ArrayOperation {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             threads[i] = Thread.ofVirtual().unstarted(() -> {
-                // Divide value by 2 and store in output array
-                output[index] = input[index] / 2;
+                // Complex computation for each element
+                output[index] = Math.sqrt(input[index] * input[index] + index) + Math.sin(input[index]);
             });
         }
 
