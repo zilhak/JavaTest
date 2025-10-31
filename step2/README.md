@@ -1,4 +1,4 @@
-# Step2: Map.of vs ConcurrentHashMap (????????????)
+# Step2: Map.of vs ConcurrentHashMap (??????)(여러번 실행해보세요)
 
 ## 코드
 10,000개의 가상 쓰레드가 Map.of (10개 엔트리)와 ConcurrentHashMap (10개 엔트리)에서 값을 읽어 배열에 저장합니다.
