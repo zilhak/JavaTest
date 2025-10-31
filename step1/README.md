@@ -1,31 +1,31 @@
-# Step1: Platform Thread vs Virtual Thread Performance Comparison
+# Step1: Platform Thread vs Virtual Thread 성능 비교
 
-## Description
-This project compares the performance of Platform Threads and Virtual Threads in Java 25.0.1.
+## 설명
+Java 25.0.1의 Platform Thread와 Virtual Thread의 성능을 비교합니다.
 
-## Test Cases
-- 1,000 iterations per thread
-- 10,000 iterations per thread
-- 100,000 iterations per thread
-- 1,000,000 iterations per thread
+## 테스트 케이스
+- 쓰레드당 1,000번 반복
+- 쓰레드당 10,000번 반복
+- 쓰레드당 100,000번 반복
+- 쓰레드당 1,000,000번 반복
 
-Each test runs 10,000 threads performing actual computation (sum of integers).
+각 테스트는 10,000개의 쓰레드를 생성하여 정수 합산 연산을 수행합니다.
 
-**JIT Optimization Prevention**: Uses `volatile` global variable to ensure JIT compiler doesn't eliminate the computation.
+**JIT 최적화 방지**: `volatile` 전역 변수를 사용하여 JIT 컴파일러가 연산을 제거하지 못하도록 합니다.
 
-## How to Run
+## 실행 방법
 
-### Compile
+### 컴파일
 ```bash
 javac src/ThreadComparison.java -d bin
 ```
 
-### Run
+### 실행
 ```bash
 java -cp bin ThreadComparison
 ```
 
-### Or use the batch file (Windows)
+### Windows 배치 파일 사용
 ```bash
 run.bat
 ```

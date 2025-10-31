@@ -1,33 +1,33 @@
-# Step2: Map.of vs HashMap Performance Comparison with Virtual Threads
+# Step2: Map.of vs ConcurrentHashMap 성능 비교 (Virtual Threads)
 
-## Description
-This project compares the performance of Map.of (immutable) and ConcurrentHashMap (mutable) when used with Virtual Threads in Java 25.0.1.
+## 설명
+Java 25.0.1의 Virtual Thread 환경에서 Map.of (불변)과 ConcurrentHashMap (가변)의 성능을 비교합니다.
 
-Both maps contain 10 entries (the maximum for Map.of).
+두 맵 모두 10개의 엔트리를 포함합니다 (Map.of의 최대 크기).
 
-**JIT Optimization Prevention**: Uses `volatile` global variable and actual hashCode() computation to ensure JIT compiler doesn't eliminate the map reads.
+**JIT 최적화 방지**: `volatile` 전역 변수와 hashCode() 연산을 사용하여 JIT 컴파일러가 맵 읽기를 제거하지 못하도록 합니다.
 
-## Test Cases
-- 1,000 iterations per thread
-- 10,000 iterations per thread
-- 100,000 iterations per thread
-- 1,000,000 iterations per thread
+## 테스트 케이스
+- 쓰레드당 1,000번 반복
+- 쓰레드당 10,000번 반복
+- 쓰레드당 100,000번 반복
+- 쓰레드당 1,000,000번 반복
 
-Each test runs 10,000 virtual threads performing read operations on the maps.
+각 테스트는 10,000개의 Virtual Thread를 생성하여 맵 읽기 연산을 수행합니다.
 
-## How to Run
+## 실행 방법
 
-### Compile
+### 컴파일
 ```bash
 javac src/MapComparison.java -d bin
 ```
 
-### Run
+### 실행
 ```bash
 java -cp bin MapComparison
 ```
 
-### Or use the batch file (Windows)
+### Windows 배치 파일 사용
 ```bash
 run.bat
 ```

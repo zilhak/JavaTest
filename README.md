@@ -12,7 +12,7 @@ JavaTest/
 │   ├── README.md
 │   └── run.bat
 │
-└── step2/          # Map.of vs HashMap 성능 비교 (Virtual Threads)
+└── step2/          # Map.of vs ConcurrentHashMap 성능 비교 (Virtual Threads)
     ├── src/
     │   └── MapComparison.java
     ├── README.md
@@ -23,13 +23,15 @@ JavaTest/
 
 ### Step1: Platform Thread vs Virtual Thread
 - 일반 플랫폼 쓰레드와 가상 쓰레드의 성능을 비교합니다
-- 10,000개의 쓰레드를 생성하여 간단한 정수 증가 연산을 수행합니다
+- 10,000개의 쓰레드를 생성하여 정수 합산 연산을 수행합니다
 - 다양한 부하(1천, 1만, 10만, 100만 반복)에서 테스트합니다
+- JIT 최적화 방지: volatile 전역 변수 사용
 
-### Step2: Map.of vs HashMap (Virtual Threads)
-- 가상 쓰레드 환경에서 불변 맵(Map.of)과 가변 맵(HashMap)의 성능을 비교합니다
+### Step2: Map.of vs ConcurrentHashMap (Virtual Threads)
+- 가상 쓰레드 환경에서 불변 맵(Map.of)과 동시성 맵(ConcurrentHashMap)의 성능을 비교합니다
 - 각 맵은 10개의 엔트리를 포함합니다 (Map.of의 최대 크기)
-- 10,000개의 가상 쓰레드에서 맵 읽기 연산을 수행합니다
+- 10,000개의 가상 쓰레드에서 맵 읽기 및 hashCode 연산을 수행합니다
+- JIT 최적화 방지: volatile 전역 변수 및 hashCode() 사용
 
 ## 실행 방법
 
