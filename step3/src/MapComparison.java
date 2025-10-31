@@ -1,7 +1,10 @@
-public class ThreadComparison {
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class MapComparison {
 
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("=== Platform Thread vs Virtual Thread Performance Comparison ===\n");
+        System.out.println("=== Map.of vs ConcurrentHashMap Performance Comparison with Virtual Threads ===\n");
 
         // Test cases with different workload sizes
         int[] workloadSizes = {1_000, 10_000, 100_000, 1_000_000};
@@ -10,22 +13,29 @@ public class ThreadComparison {
         for (int workload : workloadSizes) {
             System.out.println("--- Workload: " + workload + " iterations per thread ---");
 
-            // Test Platform Threads
-            testPlatformThreads(threadCount, workload);
+            // Test Map.of
+            testMapOf(threadCount, workload);
 
-            // Test Virtual Threads
-            testVirtualThreads(threadCount, workload);
+            // Test ConcurrentHashMap
+            testConcurrentHashMap(threadCount, workload);
 
             System.out.println();
         }
     }
 
-    private static void testPlatformThreads(int threadCount, int workload) throws InterruptedException {
+    private static void testMapOf(int threadCount, int workload) throws InterruptedException {
+        // Create shared immutable map with small size (not counted in timing)
+        Map<Integer, String> sharedMap = Map.of(
+            1, "value1",
+            2, "value2",
+            3, "value3"
+        );
+
         Thread[] threads = new Thread[threadCount];
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(() -> doWork(workload));
+            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(sharedMap, workload));
         }
 
         // Start timing
@@ -45,15 +55,21 @@ public class ThreadComparison {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1_000_000; // Convert to milliseconds
 
-        System.out.println("Platform Threads (" + threadCount + " threads): " + duration + " ms");
+        System.out.println("Map.of (immutable): " + duration + " ms");
     }
 
-    private static void testVirtualThreads(int threadCount, int workload) throws InterruptedException {
+    private static void testConcurrentHashMap(int threadCount, int workload) throws InterruptedException {
+        // Create shared HashMap with small size (not counted in timing)
+        Map<Integer, String> sharedMap = new ConcurrentHashMap<>();
+        sharedMap.put(1, "value1");
+        sharedMap.put(2, "value2");
+        sharedMap.put(3, "value3");
+
         Thread[] threads = new Thread[threadCount];
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(workload));
+            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(sharedMap, workload));
         }
 
         // Start timing
@@ -73,13 +89,13 @@ public class ThreadComparison {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1_000_000; // Convert to milliseconds
 
-        System.out.println("Virtual Threads  (" + threadCount + " threads): " + duration + " ms");
+        System.out.println("HashMap (mutable):  " + duration + " ms");
     }
 
-    private static void doWork(int iterations) {
-        int a = 0;
+    private static void doWork(Map<Integer, String> map, int iterations) {
         for (int i = 0; i < iterations; i++) {
-            a++;
+            // Read from shared map (small size: 3 entries)
+            String value = map.get((i % 3) + 1);
         }
     }
 }

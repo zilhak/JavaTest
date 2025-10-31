@@ -3,9 +3,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MapComparison {
 
-    // Prevent JIT from eliminating dead code
-    private static volatile long globalChecksum = 0;
-
     public static void main(String[] args) throws InterruptedException {
         System.out.println("=== Map.of vs ConcurrentHashMap Performance Comparison with Virtual Threads ===\n");
 
@@ -45,10 +42,7 @@ public class MapComparison {
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = Thread.ofVirtual().unstarted(() -> {
-                long checksum = doWork(sharedMap, workload);
-                globalChecksum += checksum;  // Prevent JIT optimization
-            });
+            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(sharedMap, workload));
         }
 
         // Start timing
@@ -89,10 +83,7 @@ public class MapComparison {
 
         // Initialize threads (not counted in timing)
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = Thread.ofVirtual().unstarted(() -> {
-                long checksum = doWork(sharedMap, workload);
-                globalChecksum += checksum;  // Prevent JIT optimization
-            });
+            threads[i] = Thread.ofVirtual().unstarted(() -> doWork(sharedMap, workload));
         }
 
         // Start timing
@@ -115,16 +106,10 @@ public class MapComparison {
         System.out.println("HashMap (mutable):  " + duration + " ms");
     }
 
-    private static long doWork(Map<Integer, String> map, int iterations) {
-        long checksum = 0;
+    private static void doWork(Map<Integer, String> map, int iterations) {
         for (int i = 0; i < iterations; i++) {
             // Read from shared map
             String value = map.get((i % 10) + 1);
-            // Use the value to prevent JIT optimization
-            if (value != null) {
-                checksum += value.hashCode();
-            }
         }
-        return checksum;
     }
 }

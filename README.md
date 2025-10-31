@@ -12,7 +12,13 @@ JavaTest/
 │   ├── README.md
 │   └── run.bat
 │
-└── step2/          # Map.of vs ConcurrentHashMap 성능 비교 (Virtual Threads)
+├── step2/          # Map 성능 비교 (10개 엔트리)
+│   ├── src/
+│   │   └── MapComparison.java
+│   ├── README.md
+│   └── run.bat
+│
+└── step3/          # Map 성능 비교 (3개 엔트리)
     ├── src/
     │   └── MapComparison.java
     ├── README.md
@@ -23,15 +29,22 @@ JavaTest/
 
 ### Step1: Platform Thread vs Virtual Thread
 - 일반 플랫폼 쓰레드와 가상 쓰레드의 성능을 비교합니다
-- 10,000개의 쓰레드를 생성하여 정수 합산 연산을 수행합니다
+- 10,000개의 쓰레드를 생성하여 간단한 정수 증가 연산을 수행합니다
 - 다양한 부하(1천, 1만, 10만, 100만 반복)에서 테스트합니다
-- JIT 최적화 방지: volatile 전역 변수 사용
 
-### Step2: Map.of vs ConcurrentHashMap (Virtual Threads)
+### Step2: Map.of vs ConcurrentHashMap (10개 엔트리)
 - 가상 쓰레드 환경에서 불변 맵(Map.of)과 동시성 맵(ConcurrentHashMap)의 성능을 비교합니다
-- 각 맵은 10개의 엔트리를 포함합니다 (Map.of의 최대 크기)
-- 10,000개의 가상 쓰레드에서 맵 읽기 및 hashCode 연산을 수행합니다
-- JIT 최적화 방지: volatile 전역 변수 및 hashCode() 사용
+- **맵 크기**: 10개 엔트리 (Map.of의 최대 크기)
+- **JIT 활성화**: 실제 운영 환경과 동일한 최적화 적용
+- 10,000개의 가상 쓰레드에서 맵 읽기 연산을 수행합니다
+- ConcurrentHashMap의 JIT 최적화 효과를 확인할 수 있습니다
+
+### Step3: Map.of vs ConcurrentHashMap (3개 엔트리)
+- 가상 쓰레드 환경에서 불변 맵(Map.of)과 동시성 맵(ConcurrentHashMap)의 성능을 비교합니다
+- **맵 크기**: 3개 엔트리 (작은 크기)
+- **JIT 활성화**: 실제 운영 환경과 동일한 최적화 적용
+- 10,000개의 가상 쓰레드에서 맵 읽기 연산을 수행합니다
+- Map.of의 작은 크기 최적화 장점을 확인할 수 있습니다
 
 ## 실행 방법
 
