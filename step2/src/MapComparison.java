@@ -107,9 +107,17 @@ public class MapComparison {
     }
 
     private static void doWork(Map<Integer, String> map, int iterations) {
+        // Create local array to store results (prevent JIT elimination)
+        String[] results = new String[iterations];
+
         for (int i = 0; i < iterations; i++) {
-            // Read from shared map
-            String value = map.get((i % 10) + 1);
+            // Read from shared map and store in array
+            results[i] = map.get((i % 10) + 1);
+        }
+
+        // Touch the array to prevent JIT from removing it
+        if (results[0] == null) {
+            System.out.println("Unexpected null");
         }
     }
 }

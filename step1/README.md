@@ -1,29 +1,16 @@
-# Step1: Platform Thread vs Virtual Thread 성능 비교
+# Step1: 플랫폼 쓰레드 vs 가상 쓰레드
 
-## 설명
-Java 25.0.1의 Platform Thread와 Virtual Thread의 성능을 비교합니다.
+## 코드
+10,000개의 플랫폼 쓰레드와 가상 쓰레드를 각각 생성하여 정수 증가 연산을 수행합니다.
 
 ## 테스트 케이스
-- 쓰레드당 1,000번 반복
-- 쓰레드당 10,000번 반복
-- 쓰레드당 100,000번 반복
-- 쓰레드당 1,000,000번 반복
-
-각 테스트는 10,000개의 쓰레드를 생성하여 간단한 정수 증가 연산을 수행합니다.
+- 1,000번 반복
+- 10,000번 반복
+- 100,000번 반복
+- 1,000,000번 반복
 
 ## 실행 방법
-
-### 컴파일
 ```bash
-javac src/ThreadComparison.java -d bin
-```
-
-### 실행
-```bash
-java -cp bin ThreadComparison
-```
-
-### Windows 배치 파일 사용
-```bash
-run.bat
+./run.sh    # 리눅스/맥
+run.bat     # 윈도우
 ```

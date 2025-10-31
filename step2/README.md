@@ -1,35 +1,16 @@
-# Step2: Map.of vs ConcurrentHashMap 성능 비교 (10개 엔트리)
+# Step2: Map.of vs ConcurrentHashMap (????????????)
 
-## 설명
-Java 25.0.1의 Virtual Thread 환경에서 Map.of (불변)과 ConcurrentHashMap (가변)의 성능을 비교합니다.
-
-**맵 크기**: 두 맵 모두 **10개의 엔트리**를 포함합니다 (Map.of의 최대 크기).
-
-**ConcurrentHashMap의 장점**:
-- JIT 최적화가 복잡한 해싱/동기화 로직을 효율적으로 최적화
-- 중간 크기의 맵에서 높은 성능
+## 코드
+10,000개의 가상 쓰레드가 Map.of (10개 엔트리)와 ConcurrentHashMap (10개 엔트리)에서 값을 읽어 배열에 저장합니다.
 
 ## 테스트 케이스
-- 쓰레드당 1,000번 반복
-- 쓰레드당 10,000번 반복
-- 쓰레드당 100,000번 반복
-- 쓰레드당 1,000,000번 반복
-
-각 테스트는 10,000개의 Virtual Thread를 생성하여 맵 읽기 연산을 수행합니다.
+- 1,000번 반복
+- 10,000번 반복
+- 100,000번 반복
+- 1,000,000번 반복
 
 ## 실행 방법
-
-### 컴파일
 ```bash
-javac src/MapComparison.java -d bin
-```
-
-### 실행
-```bash
-java -cp bin MapComparison
-```
-
-### Windows 배치 파일 사용
-```bash
-run.bat
+./run.sh    # 리눅스/맥
+run.bat     # 윈도우
 ```
